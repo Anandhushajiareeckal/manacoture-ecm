@@ -7,7 +7,7 @@
 #   3. production       : High-performance, lean Alpine runtime (Nginx + PHP-FPM)
 # ==============================================================================
 
-ARG PHP_VERSION=8.3
+ARG PHP_VERSION=8.4
 
 # ------------------------------------------------------------------------------
 # Stage 1: Build Frontend Assets
