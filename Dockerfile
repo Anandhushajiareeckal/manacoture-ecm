@@ -35,7 +35,7 @@ RUN npm run build
 # ------------------------------------------------------------------------------
 FROM composer:2 AS composer-builder
 
-WORKDIR /app
+WORKDIR /var/www/html
 
 # Cache vendor dependencies layer
 COPY composer.json composer.lock ./
@@ -54,8 +54,8 @@ COPY config/ config/
 COPY database/ database/
 COPY routes/ routes/
 
-# Generate optimized, authoritative classmap without dev packages or runtime scripts
-RUN composer dump-autoload --optimize --no-dev --classmap-authoritative --no-scripts
+# Generate optimized classmap without dev packages or runtime scripts
+RUN composer dump-autoload --optimize --no-dev --no-scripts
 
 
 # ------------------------------------------------------------------------------
@@ -121,8 +121,11 @@ WORKDIR /var/www/html
 # Copy application source code (respecting .dockerignore)
 COPY . .
 
+# Ensure stale local bootstrap caches from host are wiped
+RUN rm -f /var/www/html/bootstrap/cache/*.php
+
 # Copy production vendor directory from composer-builder stage
-COPY --from=composer-builder /app/vendor/ /var/www/html/vendor/
+COPY --from=composer-builder /var/www/html/vendor/ /var/www/html/vendor/
 
 # Copy compiled frontend assets from frontend-builder stage
 COPY --from=frontend-builder /app/public/build/ /var/www/html/public/build/

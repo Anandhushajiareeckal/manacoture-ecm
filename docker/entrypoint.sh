@@ -25,23 +25,31 @@ if [ ! -L /var/www/html/public/storage ]; then
     php artisan storage:link --force || true
 fi
 
-# Optional: Run database migrations automatically if flagged
-if [ "${AUTORUN_LARAVEL_MIGRATION:-false}" = "true" ]; then
-    echo "==> Running database migrations..."
-    php artisan migrate --force --graceful
-fi
+# Wipe any stale or dev service provider caches before discovery
+rm -f /var/www/html/bootstrap/cache/*.php
 
-# Discover packages into manifest
+# Discover production packages into fresh manifest
 echo "==> Discovering packages..."
 php artisan package:discover --ansi || true
 
+# Check for APP_KEY
+if [ -z "${APP_KEY}" ]; then
+    echo "==> WARNING: APP_KEY environment variable is empty. Generating key..."
+    php artisan key:generate --force || true
+fi
+
+# Optional: Run database migrations automatically if flagged
+if [ "${AUTORUN_LARAVEL_MIGRATION:-false}" = "true" ]; then
+    echo "==> Running database migrations..."
+    php artisan migrate --force --graceful || echo "==> Migrations skipped or failed (DB may still be starting up)"
+fi
+
 # Optional: Cache Laravel configuration, routes, and views for production speed
-if [ "${AUTORUN_LARAVEL_OPTIMIZE:-true}" = "true" ] && [ -n "${APP_KEY}" ]; then
+if [ "${AUTORUN_LARAVEL_OPTIMIZE:-true}" = "true" ]; then
     echo "==> Caching Laravel configuration, routes, and views..."
-    php artisan config:cache
-    php artisan route:cache
-    php artisan view:cache
-    php artisan event:cache
+    php artisan config:cache || true
+    php artisan route:cache || true
+    php artisan view:cache || true
 fi
 
 echo "==> Application ready. Launching process manager..."
