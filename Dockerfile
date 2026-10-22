@@ -54,8 +54,8 @@ COPY config/ config/
 COPY database/ database/
 COPY routes/ routes/
 
-# Generate optimized, authoritative classmap without dev packages
-RUN composer dump-autoload --optimize --no-dev --classmap-authoritative
+# Generate optimized, authoritative classmap without dev packages or runtime scripts
+RUN composer dump-autoload --optimize --no-dev --classmap-authoritative --no-scripts
 
 
 # ------------------------------------------------------------------------------

@@ -31,6 +31,10 @@ if [ "${AUTORUN_LARAVEL_MIGRATION:-false}" = "true" ]; then
     php artisan migrate --force --graceful
 fi
 
+# Discover packages into manifest
+echo "==> Discovering packages..."
+php artisan package:discover --ansi || true
+
 # Optional: Cache Laravel configuration, routes, and views for production speed
 if [ "${AUTORUN_LARAVEL_OPTIMIZE:-true}" = "true" ] && [ -n "${APP_KEY}" ]; then
     echo "==> Caching Laravel configuration, routes, and views..."
