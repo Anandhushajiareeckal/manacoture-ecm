@@ -1,0 +1,85 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        PHP_VERSION: 8.3
+    container_name: manacoture-app
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-8080}:80"
+    environment:
+      APP_NAME: "${APP_NAME:-ManaCouture}"
+      APP_ENV: "${APP_ENV:-production}"
+      APP_KEY: "${APP_KEY}"
+      APP_DEBUG: "${APP_DEBUG:-false}"
+      APP_URL: "${APP_URL:-http://localhost:8080}"
+      DB_CONNECTION: mysql
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: "${DB_DATABASE:-manacoture_ecm}"
+      DB_USERNAME: "${DB_USERNAME:-manacoture_user}"
+      DB_PASSWORD: "${DB_PASSWORD:-secret123}"
+      CACHE_STORE: redis
+      SESSION_DRIVER: redis
+      QUEUE_CONNECTION: redis
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      AUTORUN_LARAVEL_MIGRATION: "true"
+      AUTORUN_LARAVEL_OPTIMIZE: "true"
+    volumes:
+      - storage-public:/var/www/html/storage/app/public
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - manacoture-network
+
+  mysql:
+    image: mysql:8.0
+    container_name: manacoture-mysql
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: "${DB_PASSWORD:-secret123}"
+      MYSQL_DATABASE: "${DB_DATABASE:-manacoture_ecm}"
+      MYSQL_USER: "${DB_USERNAME:-manacoture_user}"
+      MYSQL_PASSWORD: "${DB_PASSWORD:-secret123}"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - manacoture-network
+
+  redis:
+    image: redis:alpine
+    container_name: manacoture-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - manacoture-network
+
+volumes:
+  mysql-data:
+  redis-data:
+  storage-public:
+
+networks:
+  manacoture-network:
+    driver: bridge

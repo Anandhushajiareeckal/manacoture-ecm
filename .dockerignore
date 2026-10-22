@@ -1,0 +1,61 @@
+# ==============================================================================
+# .dockerignore
+# Ignore local development files, sensitive secrets, and build caches
+# ==============================================================================
+
+# Git & Repository metadata
+.git/
+.github/
+.gitignore
+.gitattributes
+
+# Environment & Sensitive Credentials
+.env
+.env.*
+!.env.example
+
+# Local Dependency Directories (built inside multi-stage Docker stages)
+node_modules/
+vendor/
+
+# Frontend Build & Caches
+public/build/
+public/hot
+.npm/
+
+# Laravel Storage & Framework Caches
+storage/*.key
+storage/app/*
+!storage/app/public/.gitignore
+storage/framework/cache/*
+!storage/framework/cache/.gitignore
+storage/framework/sessions/*
+!storage/framework/sessions/.gitignore
+storage/framework/views/*
+!storage/framework/views/.gitignore
+storage/logs/*.log
+bootstrap/cache/*.php
+
+# IDE & Editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Agent & AI tool configurations
+.agents/
+.gemini/
+.antigravity/
+
+# Tests & Documentation
+tests/
+phpunit.xml
+phpunit.result.cache
+.phpunit.cache/
+README.md
+
+# Docker-related files not needed in container image
+docker-compose*.yml
+Dockerfile*
