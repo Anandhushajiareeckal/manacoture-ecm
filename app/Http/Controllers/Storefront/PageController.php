@@ -7,12 +7,21 @@ use Illuminate\Http\Request;
 use App\Models\Customer;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\Page;
 
 class PageController extends Controller
 {
     public function about()
     {
         return view('storefront.about');
+    }
+
+    public function show(string $slug)
+    {
+        $page = Page::where('slug', $slug)->active()->firstOrFail();
+        $otherPages = Page::active()->where('id', '!=', $page->id)->orderBy('sort_order')->take(6)->get();
+
+        return view('storefront.page', compact('page', 'otherPages'));
     }
 
     public function account()

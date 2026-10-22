@@ -1,7 +1,7 @@
 @extends('layouts.storefront')
 
-@section('title', 'ManaCouture — Handwoven Kerala Sarees & Bridal Couture')
-@section('meta_description', 'Kasavu sarees, bridal silks, set mundu and heirloom couture handwoven in Kerala by master artisans.')
+@section('title', \App\Models\Setting::get('cms_site_title', 'ManaCouture') . ' — ' . \App\Models\Setting::get('cms_site_tagline', 'Handwoven Kerala Sarees & Bridal Couture'))
+@section('meta_description', \App\Models\Setting::get('cms_hero_description', 'Kasavu sarees, bridal silks, set mundu and heirloom couture handwoven in Kerala by master artisans.'))
 
 @section('content')
 <div>
@@ -9,41 +9,45 @@
     <section class="relative">
         <div class="grid lg:grid-cols-[1.1fr_1fr] min-h-[86vh]">
             <div class="relative flex items-center bg-secondary/40 px-6 sm:px-12 lg:px-20 py-20">
-                <div class="absolute top-8 left-6 lg:left-20 eyebrow">Onam Collection · 2026</div>
+                <div class="absolute top-8 left-6 lg:left-20 eyebrow">
+                    {{ \App\Models\Setting::get('cms_hero_eyebrow', 'Onam Collection · 2026') }}
+                </div>
                 <div class="max-w-xl animate-fade-up">
                     <h1 class="font-display text-[clamp(2.75rem,6vw,5.25rem)] leading-[1.02] tracking-tight text-foreground">
-                        Woven in gold.
-                        <span class="block italic font-serif text-accent">Worn like poetry.</span>
+                        {{ \App\Models\Setting::get('cms_hero_title_1', 'Woven in gold.') }}
+                        <span class="block italic font-serif text-accent">{{ \App\Models\Setting::get('cms_hero_title_2', 'Worn like poetry.') }}</span>
                     </h1>
                     <p class="mt-8 text-base text-muted-foreground max-w-md leading-relaxed">
-                        A limited edition of hand-loomed Kasavu sarees, dyed in ivory
-                        and edged with antique gold — crafted by third-generation
-                        weavers in Balaramapuram.
+                        {{ \App\Models\Setting::get('cms_hero_description', 'A limited edition of hand-loomed Kasavu sarees, dyed in ivory and edged with antique gold — crafted by third-generation weavers in Balaramapuram.') }}
                     </p>
                     <div class="mt-10 flex flex-wrap gap-4">
-                        <a href="{{ route('shop.index') }}" class="btn-luxe">
-                            Shop New Collection <i class="ti ti-arrow-right"></i>
+                        <a href="{{ \App\Models\Setting::get('cms_hero_btn1_url', route('shop.index')) }}" class="btn-luxe">
+                            {{ \App\Models\Setting::get('cms_hero_btn1_text', 'Shop New Collection') }} <i class="ti ti-arrow-right"></i>
                         </a>
-                        <a href="{{ route('shop.index', ['c' => 'kerala-sarees']) }}" class="btn-outline-luxe">
-                            Explore Sarees
+                        <a href="{{ \App\Models\Setting::get('cms_hero_btn2_url', route('shop.index', ['c' => 'kerala-sarees'])) }}" class="btn-outline-luxe">
+                            {{ \App\Models\Setting::get('cms_hero_btn2_text', 'Explore Sarees') }}
                         </a>
                     </div>
                     <div class="mt-14 flex items-center gap-6 text-xs text-muted-foreground">
                         <div class="flex items-center gap-2">
                             <span class="gold-divider"></span>
-                            <span>Handloom certified</span>
+                            <span>{{ \App\Models\Setting::get('cms_hero_badge_1', 'Handloom certified') }}</span>
                         </div>
                         <div class="flex items-center gap-2">
                             <span class="text-accent flex items-center"><i class="ti ti-star-filled"></i></span>
-                            <span>4.9 · 12,400 reviews</span>
+                            <span>{{ \App\Models\Setting::get('cms_hero_badge_2', '4.9 · 12,400 reviews') }}</span>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="relative overflow-hidden bg-secondary min-h-[60vh] lg:min-h-full">
+                @php
+                    $heroPath = \App\Models\Setting::get('cms_hero_image', 'images/manacoture/hero-saree.jpg');
+                    $heroSrc = str_starts_with($heroPath, 'http') ? $heroPath : asset($heroPath);
+                @endphp
                 <img
-                    src="{{ asset('images/manacoture/hero-saree.jpg') }}"
-                    alt="Kerala Kasavu saree editorial"
+                    src="{{ $heroSrc }}"
+                    alt="{{ \App\Models\Setting::get('cms_site_title', 'ManaCouture') }} Editorial"
                     class="absolute inset-0 h-full w-full object-cover"
                 />
                 <div class="absolute bottom-6 right-6 bg-background/90 backdrop-blur-md px-5 py-4 max-w-[220px] shadow-lg border border-border/50">
@@ -56,23 +60,29 @@
     </section>
 
     <!-- MARQUEE STRIP -->
-    <section class="border-y border-border overflow-hidden py-6 bg-background">
-        <div class="animate-marquee whitespace-nowrap font-display text-2xl md:text-4xl italic text-foreground/60">
-            @for($i = 0; $i < 2; $i++)
-                @foreach(['Kasavu', 'Bridal Silks', 'Set Mundu', 'Handloom', 'Kanchipuram', 'Onam', 'Vishu', 'Temple Wear'] as $word)
-                    <span class="mx-8">
-                        {{ $word }} <span class="text-accent">✦</span>
-                    </span>
-                @endforeach
-            @endfor
-        </div>
-    </section>
+    @php
+        $marqueeRaw = \App\Models\Setting::get('cms_marquee_words', 'Kasavu, Bridal Silks, Set Mundu, Handloom, Kanchipuram, Onam, Vishu, Temple Wear');
+        $marqueeWords = array_filter(array_map('trim', explode(',', $marqueeRaw)));
+    @endphp
+    @if(count($marqueeWords))
+        <section class="border-y border-border overflow-hidden py-6 bg-background">
+            <div class="animate-marquee whitespace-nowrap font-display text-2xl md:text-4xl italic text-foreground/60">
+                @for($i = 0; $i < 2; $i++)
+                    @foreach($marqueeWords as $word)
+                        <span class="mx-8">
+                            {{ $word }} <span class="text-accent">✦</span>
+                        </span>
+                    @endforeach
+                @endfor
+            </div>
+        </section>
+    @endif
 
     <!-- CURATED CATEGORIES -->
     <section class="max-w-[1400px] mx-auto px-6 lg:px-10 py-24 md:py-32">
         <div class="max-w-2xl mb-14">
-            <div class="eyebrow mb-4">Curated Categories</div>
-            <h2 class="font-display text-4xl md:text-5xl leading-[1.05]">The Kerala Weaves</h2>
+            <div class="eyebrow mb-4">{{ \App\Models\Setting::get('cms_categories_eyebrow', 'Curated Categories') }}</div>
+            <h2 class="font-display text-4xl md:text-5xl leading-[1.05]">{{ \App\Models\Setting::get('cms_categories_heading', 'The Kerala Weaves') }}</h2>
         </div>
 
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
@@ -104,11 +114,11 @@
         <div class="max-w-[1400px] mx-auto px-6 lg:px-10">
             <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-14">
                 <div>
-                    <div class="eyebrow mb-4">Featured Heirlooms</div>
-                    <h2 class="font-display text-4xl md:text-5xl">Handloom Masterpieces</h2>
+                    <div class="eyebrow mb-4">{{ \App\Models\Setting::get('cms_featured_eyebrow', 'Featured Heirlooms') }}</div>
+                    <h2 class="font-display text-4xl md:text-5xl">{{ \App\Models\Setting::get('cms_featured_heading', 'Handloom Masterpieces') }}</h2>
                 </div>
                 <a href="{{ route('shop.index') }}" class="btn-outline-luxe">
-                    View Entire Edit <i class="ti ti-arrow-right"></i>
+                    {{ \App\Models\Setting::get('cms_featured_btn_text', 'View Entire Edit') }} <i class="ti ti-arrow-right"></i>
                 </a>
             </div>
 
@@ -124,29 +134,31 @@
     <section class="max-w-[1400px] mx-auto px-6 lg:px-10 py-24 md:py-32">
         <div class="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             <div class="relative overflow-hidden aspect-[4/5] bg-secondary shadow-luxe">
+                @php
+                    $bridalPath = \App\Models\Setting::get('cms_bridal_image', 'images/manacoture/bridal.jpg');
+                    $bridalSrc = str_starts_with($bridalPath, 'http') ? $bridalPath : asset($bridalPath);
+                @endphp
                 <img
-                    src="{{ asset('images/manacoture/bridal.jpg') }}"
+                    src="{{ $bridalSrc }}"
                     alt="Bridal Couture Editorial"
                     loading="lazy"
                     class="absolute inset-0 h-full w-full object-cover"
                 />
             </div>
             <div class="max-w-xl">
-                <div class="eyebrow mb-4">The Bridal Atelier</div>
+                <div class="eyebrow mb-4">{{ \App\Models\Setting::get('cms_bridal_eyebrow', 'The Bridal Atelier') }}</div>
                 <h2 class="font-display text-4xl md:text-5xl leading-tight">
-                    Gold woven for a lifetime.
+                    {{ \App\Models\Setting::get('cms_bridal_heading', 'Gold woven for a lifetime.') }}
                 </h2>
                 <p class="mt-6 text-muted-foreground leading-relaxed">
-                    Every Kerala bride deserves a weave that honors tradition while commanding the room.
-                    Our bridal collection unites heirloom Kanchipuram silk with hand-beaten certified zari,
-                    finished by master artisans in our Kochi studio.
+                    {{ \App\Models\Setting::get('cms_bridal_description', 'Every Kerala bride deserves a weave that honors tradition while commanding the room. Our bridal collection unites heirloom Kanchipuram silk with hand-beaten certified zari, finished by master artisans in our Kochi studio.') }}
                 </p>
                 <div class="mt-10 flex flex-wrap gap-4">
-                    <a href="{{ route('shop.index', ['c' => 'bridal']) }}" class="btn-luxe">
-                        Discover Bridal Silks <i class="ti ti-arrow-right"></i>
+                    <a href="{{ \App\Models\Setting::get('cms_bridal_btn1_url', route('shop.index', ['c' => 'bridal'])) }}" class="btn-luxe">
+                        {{ \App\Models\Setting::get('cms_bridal_btn1_text', 'Discover Bridal Silks') }} <i class="ti ti-arrow-right"></i>
                     </a>
-                    <a href="{{ route('about') }}" class="btn-outline-luxe">
-                        Book Atelier Appointment
+                    <a href="{{ \App\Models\Setting::get('cms_bridal_btn2_url', route('about')) }}" class="btn-outline-luxe">
+                        {{ \App\Models\Setting::get('cms_bridal_btn2_text', 'Book Atelier Appointment') }}
                     </a>
                 </div>
             </div>
@@ -155,8 +167,12 @@
 
     <!-- FESTIVAL FULL BLEED BANNER -->
     <section class="relative h-[70vh] overflow-hidden">
+        @php
+            $festPath = \App\Models\Setting::get('cms_festival_image', 'images/manacoture/festival.jpg');
+            $festSrc = str_starts_with($festPath, 'http') ? $festPath : asset($festPath);
+        @endphp
         <img
-            src="{{ asset('images/manacoture/festival.jpg') }}"
+            src="{{ $festSrc }}"
             alt="Festival collection banner"
             loading="lazy"
             class="absolute inset-0 h-full w-full object-cover"
@@ -164,16 +180,15 @@
         <div class="absolute inset-0 bg-primary/45"></div>
         <div class="relative h-full flex items-center max-w-[1400px] mx-auto px-6 lg:px-20">
             <div class="max-w-xl text-primary-foreground">
-                <div class="eyebrow text-gold-soft mb-6">Festival · Onam · Vishu</div>
+                <div class="eyebrow text-gold-soft mb-6">{{ \App\Models\Setting::get('cms_festival_eyebrow', 'Festival · Onam · Vishu') }}</div>
                 <h2 class="font-display text-5xl md:text-6xl leading-[1.05]">
-                    A courtyard lit for celebration.
+                    {{ \App\Models\Setting::get('cms_festival_heading', 'A courtyard lit for celebration.') }}
                 </h2>
                 <p class="mt-6 text-primary-foreground/85 max-w-md leading-relaxed text-sm md:text-base">
-                    Discover our festival edit — Kasavu for Onam, silks for Vishu,
-                    and temple couture for every sacred occasion.
+                    {{ \App\Models\Setting::get('cms_festival_description', 'Discover our festival edit — Kasavu for Onam, silks for Vishu, and temple couture for every sacred occasion.') }}
                 </p>
-                <a href="{{ route('shop.index', ['occasion' => 'Festival']) }}" class="btn-luxe mt-10 bg-background text-foreground border-background hover:bg-transparent hover:text-primary-foreground">
-                    Shop The Edit <i class="ti ti-arrow-right"></i>
+                <a href="{{ \App\Models\Setting::get('cms_festival_btn_url', route('shop.index', ['occasion' => 'Festival'])) }}" class="btn-luxe mt-10 bg-background text-foreground border-background hover:bg-transparent hover:text-primary-foreground">
+                    {{ \App\Models\Setting::get('cms_festival_btn_text', 'Shop The Edit') }} <i class="ti ti-arrow-right"></i>
                 </a>
             </div>
         </div>
@@ -182,8 +197,8 @@
     <!-- BEST SELLERS -->
     <section class="max-w-[1400px] mx-auto px-6 lg:px-10 py-24 md:py-32">
         <div class="max-w-2xl mb-14">
-            <div class="eyebrow mb-4">Best Sellers</div>
-            <h2 class="font-display text-4xl md:text-5xl leading-[1.05]">Loved By Many</h2>
+            <div class="eyebrow mb-4">{{ \App\Models\Setting::get('cms_bestsellers_eyebrow', 'Best Sellers') }}</div>
+            <h2 class="font-display text-4xl md:text-5xl leading-[1.05]">{{ \App\Models\Setting::get('cms_bestsellers_heading', 'Loved By Many') }}</h2>
         </div>
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
             @foreach($bestSellers as $product)
@@ -196,8 +211,8 @@
     <section class="bg-secondary/50 py-24 md:py-32 border-t border-border">
         <div class="max-w-[1400px] mx-auto px-6 lg:px-10">
             <div class="max-w-2xl mb-14">
-                <div class="eyebrow mb-4">The ManaCouture Promise</div>
-                <h2 class="font-display text-4xl md:text-5xl leading-[1.05]">Craft That Lasts A Lifetime</h2>
+                <div class="eyebrow mb-4">{{ \App\Models\Setting::get('cms_promise_eyebrow', 'The ManaCouture Promise') }}</div>
+                <h2 class="font-display text-4xl md:text-5xl leading-[1.05]">{{ \App\Models\Setting::get('cms_promise_heading', 'Craft That Lasts A Lifetime') }}</h2>
             </div>
             <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 @php
@@ -272,7 +287,7 @@
                 ];
             @endphp
             @foreach($instaImages as $img)
-                <a href="https://instagram.com" target="_blank" class="relative aspect-square group overflow-hidden bg-secondary block">
+                <a href="{{ \App\Models\Setting::get('cms_social_instagram', 'https://instagram.com/manacouture') }}" target="_blank" class="relative aspect-square group overflow-hidden bg-secondary block">
                     <img src="{{ asset($img) }}" alt="" loading="lazy" class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-110">
                     <div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/40 transition-colors grid place-items-center">
                         <i class="ti ti-brand-instagram text-2xl text-primary-foreground opacity-0 group-hover:opacity-100 transition-opacity"></i>

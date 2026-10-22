@@ -203,22 +203,23 @@
 </head>
 <body class="min-h-screen flex flex-col bg-background text-foreground antialiased selection:bg-gold-soft selection:text-charcoal">
 
+    @if(\App\Models\Setting::get('cms_announcement_active', true))
     <!-- Announcement Bar -->
     <div class="bg-primary text-primary-foreground text-[11px] tracking-[0.24em] uppercase py-2.5 text-center overflow-hidden z-50">
         <div class="animate-marquee whitespace-nowrap inline-block">
-            <span class="mx-8">Complimentary shipping across India</span>
-            <span class="mx-8">·</span>
-            <span class="mx-8">Handwoven in Kerala</span>
-            <span class="mx-8">·</span>
-            <span class="mx-8">New Onam Collection 2026</span>
-            <span class="mx-8">·</span>
-            <span class="mx-8">Complimentary shipping across India</span>
-            <span class="mx-8">·</span>
-            <span class="mx-8">Handwoven in Kerala</span>
-            <span class="mx-8">·</span>
-            <span class="mx-8">New Onam Collection 2026</span>
+            @php
+                $annText = \App\Models\Setting::get('cms_announcement_text', 'Complimentary shipping across India · Handwoven in Kerala · New Onam Collection 2026');
+                $annItems = array_filter(array_map('trim', explode('·', $annText)));
+            @endphp
+            @for($r = 0; $r < 2; $r++)
+                @foreach($annItems as $item)
+                    <span class="mx-8">{{ $item }}</span>
+                    <span class="mx-8">·</span>
+                @endforeach
+            @endfor
         </div>
     </div>
+    @endif
 
     <!-- Header -->
     <header id="site-header" class="sticky top-0 z-40 transition-all duration-300 bg-background border-b border-border">
@@ -404,21 +405,31 @@
             <div class="grid gap-12 md:grid-cols-2 lg:grid-cols-5 mb-16">
                 <!-- Brand Bio -->
                 <div class="lg:col-span-2 max-w-sm">
-                    <div class="font-display text-3xl mb-4">ManaCouture</div>
+                    <div class="font-display text-3xl mb-4">{{ \App\Models\Setting::get('cms_site_title', 'ManaCouture') }}</div>
                     <p class="text-sm text-muted-foreground leading-relaxed">
-                        Contemporary heirlooms rooted in the handloom traditions of Kerala.
-                        Every weave is crafted by master artisans and delivered with care.
+                        {{ \App\Models\Setting::get('cms_footer_bio', 'Contemporary heirlooms rooted in the handloom traditions of Kerala. Every weave is crafted by master artisans and delivered with care.') }}
                     </p>
                     <div class="flex gap-3 mt-6">
-                        <a href="https://instagram.com" target="_blank" aria-label="Instagram" class="h-10 w-10 border border-border rounded-full grid place-items-center hover:bg-primary hover:text-primary-foreground transition-colors">
-                            <i class="ti ti-brand-instagram"></i>
-                        </a>
-                        <a href="https://facebook.com" target="_blank" aria-label="Facebook" class="h-10 w-10 border border-border rounded-full grid place-items-center hover:bg-primary hover:text-primary-foreground transition-colors">
-                            <i class="ti ti-brand-facebook"></i>
-                        </a>
-                        <a href="https://youtube.com" target="_blank" aria-label="Youtube" class="h-10 w-10 border border-border rounded-full grid place-items-center hover:bg-primary hover:text-primary-foreground transition-colors">
-                            <i class="ti ti-brand-youtube"></i>
-                        </a>
+                        @if($insta = \App\Models\Setting::get('cms_social_instagram', 'https://instagram.com'))
+                            <a href="{{ $insta }}" target="_blank" aria-label="Instagram" class="h-10 w-10 border border-border rounded-full grid place-items-center hover:bg-primary hover:text-primary-foreground transition-colors">
+                                <i class="ti ti-brand-instagram"></i>
+                            </a>
+                        @endif
+                        @if($fb = \App\Models\Setting::get('cms_social_facebook', 'https://facebook.com'))
+                            <a href="{{ $fb }}" target="_blank" aria-label="Facebook" class="h-10 w-10 border border-border rounded-full grid place-items-center hover:bg-primary hover:text-primary-foreground transition-colors">
+                                <i class="ti ti-brand-facebook"></i>
+                            </a>
+                        @endif
+                        @if($yt = \App\Models\Setting::get('cms_social_youtube', 'https://youtube.com'))
+                            <a href="{{ $yt }}" target="_blank" aria-label="Youtube" class="h-10 w-10 border border-border rounded-full grid place-items-center hover:bg-primary hover:text-primary-foreground transition-colors">
+                                <i class="ti ti-brand-youtube"></i>
+                            </a>
+                        @endif
+                        @if($wa = \App\Models\Setting::get('cms_social_whatsapp'))
+                            <a href="{{ $wa }}" target="_blank" aria-label="WhatsApp" class="h-10 w-10 border border-border rounded-full grid place-items-center hover:bg-primary hover:text-primary-foreground transition-colors text-success">
+                                <i class="ti ti-brand-whatsapp"></i>
+                            </a>
+                        @endif
                     </div>
                 </div>
 
@@ -440,9 +451,9 @@
                     <ul class="space-y-3 text-sm">
                         <li><a href="{{ route('account') }}" class="text-foreground/80 hover:text-accent transition-colors">My Atelier Account</a></li>
                         <li><a href="{{ route('cart.index') }}" class="text-foreground/80 hover:text-accent transition-colors">Shopping Bag</a></li>
-                        <li><a href="{{ route('about') }}" class="text-foreground/80 hover:text-accent transition-colors">Shipping & Delivery</a></li>
-                        <li><a href="{{ route('about') }}" class="text-foreground/80 hover:text-accent transition-colors">Returns & Exchanges</a></li>
-                        <li><a href="{{ route('about') }}" class="text-foreground/80 hover:text-accent transition-colors">Handloom Care Guide</a></li>
+                        <li><a href="{{ route('pages.show', 'shipping-delivery') }}" class="text-foreground/80 hover:text-accent transition-colors">Shipping & Delivery</a></li>
+                        <li><a href="{{ route('pages.show', 'returns-exchanges') }}" class="text-foreground/80 hover:text-accent transition-colors">Returns & Exchanges</a></li>
+                        <li><a href="{{ route('pages.show', 'handloom-care-guide') }}" class="text-foreground/80 hover:text-accent transition-colors">Handloom Care Guide</a></li>
                     </ul>
                 </div>
 
@@ -451,7 +462,7 @@
                     <div class="eyebrow mb-5">Atelier</div>
                     <ul class="space-y-3 text-sm">
                         <li><a href="{{ route('about') }}" class="text-foreground/80 hover:text-accent transition-colors">Our Kerala Heritage</a></li>
-                        <li><a href="{{ route('about') }}" class="text-foreground/80 hover:text-accent transition-colors">Artisan Families</a></li>
+                        <li><a href="{{ route('pages.show', 'authenticity-certificate') }}" class="text-foreground/80 hover:text-accent transition-colors">Authenticity Certificate</a></li>
                         <li><a href="{{ route('about') }}" class="text-foreground/80 hover:text-accent transition-colors">Sustainability & Ethics</a></li>
                         <li><a href="{{ route('about') }}" class="text-foreground/80 hover:text-accent transition-colors">Private Appointments</a></li>
                         <li><a href="{{ route('admin.dashboard') }}" class="text-accent hover:underline font-medium">Atelier Admin Backend</a></li>
@@ -461,11 +472,11 @@
 
             <!-- Footer Bottom -->
             <div class="border-t border-border pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-muted-foreground">
-                <div>© {{ date('Y') }} ManaCouture · Handwoven in Balaramapuram & Kochi, Kerala, India</div>
+                <div>© {{ date('Y') }} {{ \App\Models\Setting::get('cms_site_title', 'ManaCouture') }} · Handwoven in Balaramapuram & Kochi, Kerala, India</div>
                 <div class="flex gap-6">
-                    <a href="{{ route('about') }}" class="link-underline">Privacy Policy</a>
-                    <a href="{{ route('about') }}" class="link-underline">Terms of Service</a>
-                    <a href="{{ route('about') }}" class="link-underline">Authenticity Certificate</a>
+                    <a href="{{ route('pages.show', 'privacy-policy') }}" class="link-underline">Privacy Policy</a>
+                    <a href="{{ route('pages.show', 'terms-of-service') }}" class="link-underline">Terms of Service</a>
+                    <a href="{{ route('pages.show', 'authenticity-certificate') }}" class="link-underline">Authenticity Certificate</a>
                 </div>
             </div>
         </div>

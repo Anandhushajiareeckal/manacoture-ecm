@@ -51,16 +51,16 @@
                 <div class="card-body">
                     <div class="row g-3">
                         <div class="col-md-4">
-                            <label for="price" class="form-label">Selling Price ($) <span class="text-danger">*</span></label>
-                            <input type="number" step="0.01" name="price" id="price" class="form-control @error('price') is-invalid @enderror" value="{{ old('price') }}" placeholder="0.00" required>
+                            <label for="price" class="form-label">Selling Price (₹) <span class="text-danger">*</span></label>
+                            <input type="number" step="0.01" min="0" max="999999999999.99" name="price" id="price" class="form-control @error('price') is-invalid @enderror" value="{{ old('price') }}" placeholder="0.00" required>
                         </div>
                         <div class="col-md-4">
-                            <label for="cost_price" class="form-label">Cost Price ($)</label>
-                            <input type="number" step="0.01" name="cost_price" id="cost_price" class="form-control" value="{{ old('cost_price') }}" placeholder="0.00">
+                            <label for="cost_price" class="form-label">Cost Price (₹)</label>
+                            <input type="number" step="0.01" min="0" max="999999999999.99" name="cost_price" id="cost_price" class="form-control" value="{{ old('cost_price') }}" placeholder="0.00">
                         </div>
                         <div class="col-md-4">
-                            <label for="compare_price" class="form-label">Compare-at Price ($)</label>
-                            <input type="number" step="0.01" name="compare_price" id="compare_price" class="form-control" value="{{ old('compare_price') }}" placeholder="0.00">
+                            <label for="compare_price" class="form-label">Compare-at Price (₹)</label>
+                            <input type="number" step="0.01" min="0" max="999999999999.99" name="compare_price" id="compare_price" class="form-control" value="{{ old('compare_price') }}" placeholder="0.00">
                         </div>
 
                         <div class="col-md-4">

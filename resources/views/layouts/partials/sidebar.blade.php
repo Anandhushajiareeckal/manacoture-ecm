@@ -208,6 +208,37 @@
                 </a>
             </li>
 
+            <li class="side-nav-title mt-2">Content & CMS</li>
+
+            <li class="side-nav-item {{ request()->routeIs('admin.cms.*') ? 'active' : '' }}">
+                <a data-bs-toggle="collapse" href="#menuCms" aria-expanded="{{ request()->routeIs('admin.cms.*') ? 'true' : 'false' }}" aria-controls="menuCms" class="side-nav-link">
+                    <span class="menu-icon"><i class="ti ti-layout-dashboard"></i></span>
+                    <span class="menu-text">Storefront CMS</span>
+                    <span class="menu-arrow"></span>
+                </a>
+                <div class="collapse {{ request()->routeIs('admin.cms.*') ? 'show' : '' }}" id="menuCms">
+                    <ul class="sub-menu">
+                        <li class="side-nav-item">
+                            <a href="{{ route('admin.cms.home') }}" class="side-nav-link {{ request()->routeIs('admin.cms.home') ? 'active' : '' }}">
+                                <span class="menu-text">Home & Banners</span>
+                            </a>
+                        </li>
+                        <li class="side-nav-item">
+                            <a href="{{ route('admin.cms.about') }}" class="side-nav-link {{ request()->routeIs('admin.cms.about') ? 'active' : '' }}">
+                                <span class="menu-text">About & Atelier Story</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+
+            <li class="side-nav-item {{ request()->routeIs('admin.pages.*') ? 'active' : '' }}">
+                <a href="{{ route('admin.pages.index') }}" class="side-nav-link">
+                    <span class="menu-icon"><i class="ti ti-file-text"></i></span>
+                    <span class="menu-text">Custom CMS Pages</span>
+                </a>
+            </li>
+
             <li class="side-nav-title mt-2">Reports & System</li>
 
             <li class="side-nav-item {{ request()->routeIs('admin.reports.*') ? 'active' : '' }}">

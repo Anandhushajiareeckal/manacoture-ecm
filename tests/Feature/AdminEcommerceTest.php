@@ -307,4 +307,58 @@ class AdminEcommerceTest extends TestCase
         $prodsExport->assertStatus(200);
         $prodsExport->assertHeader('Content-Type', 'text/csv; charset=UTF-8');
     }
+
+    public function test_admin_can_update_product_with_large_price(): void
+    {
+        $product = Product::create([
+            'name' => 'High Value Silk Saree',
+            'slug' => 'high-value-silk-saree',
+            'sku' => 'HVAL-001',
+            'type' => 'simple',
+            'price' => 8499.00,
+            'stock_qty' => 5,
+            'low_stock_threshold' => 1,
+            'status' => 'active',
+        ]);
+
+        $response = $this->actingAs($this->adminUser)->put(route('admin.products.update', $product), [
+            'name' => 'High Value Silk Saree Updated',
+            'sku' => 'HVAL-001',
+            'type' => 'simple',
+            'price' => 849999999999.00,
+            'stock_qty' => 5,
+            'low_stock_threshold' => 1,
+            'status' => 'active',
+            'is_new' => 0,
+        ]);
+
+        $response->assertSessionHas('success');
+        $this->assertEquals('849999999999.00', $product->fresh()->price);
+    }
+
+    public function test_admin_product_update_validates_maximum_price(): void
+    {
+        $product = Product::create([
+            'name' => 'Test Saree',
+            'slug' => 'test-saree-val',
+            'sku' => 'TVAL-001',
+            'type' => 'simple',
+            'price' => 1000.00,
+            'stock_qty' => 5,
+            'low_stock_threshold' => 1,
+            'status' => 'active',
+        ]);
+
+        $response = $this->actingAs($this->adminUser)->put(route('admin.products.update', $product), [
+            'name' => 'Test Saree',
+            'sku' => 'TVAL-001',
+            'type' => 'simple',
+            'price' => 9999999999999999.00,
+            'stock_qty' => 5,
+            'low_stock_threshold' => 1,
+            'status' => 'active',
+        ]);
+
+        $response->assertSessionHasErrors(['price']);
+    }
 }

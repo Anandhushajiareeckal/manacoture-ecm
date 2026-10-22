@@ -27,6 +27,8 @@ use App\Http\Controllers\Admin\ReturnController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\CmsController;
+use App\Http\Controllers\Admin\PageController as AdminPageController;
 use App\Http\Controllers\ProfileController;
 
 /*
@@ -53,6 +55,7 @@ Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.in
 Route::post('/wishlist/toggle/{id}', [WishlistController::class, 'toggle'])->name('wishlist.toggle');
 
 Route::get('/about', [PageController::class, 'about'])->name('about');
+Route::get('/pages/{slug}', [PageController::class, 'show'])->name('pages.show');
 Route::get('/account', [PageController::class, 'account'])->name('account');
 Route::get('/customer/auth', [PageController::class, 'auth'])->name('customer.auth');
 
@@ -118,6 +121,13 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('reports/sales', [ReportController::class, 'sales'])->name('reports.sales');
     Route::get('reports/export-orders', [ReportController::class, 'exportOrders'])->name('reports.export-orders');
     Route::get('reports/export-products', [ReportController::class, 'exportProducts'])->name('reports.export-products');
+
+    // CMS & Storefront Content Management
+    Route::get('cms/home', [CmsController::class, 'home'])->name('cms.home');
+    Route::get('cms/about', [CmsController::class, 'about'])->name('cms.about');
+    Route::post('cms/update', [CmsController::class, 'update'])->name('cms.update');
+    Route::patch('pages/{page}/toggle-status', [AdminPageController::class, 'toggleStatus'])->name('pages.toggle-status');
+    Route::resource('pages', AdminPageController::class);
 
     // Settings
     Route::get('settings', [SettingController::class, 'index'])->name('settings.index');
